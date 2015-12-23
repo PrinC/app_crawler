@@ -59,7 +59,7 @@ NEWSPIDER_MODULE = 'app_crawler.spiders'
 #    'scrapy.extensions.closespider.CloseSpider': 1,
 #}
 
-CLOSESPIDER_PAGECOUNT = 2
+CLOSESPIDER_ITEMCOUNT = 2
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
@@ -71,7 +71,7 @@ ITEM_PIPELINES = {
 
 FILES_STORE = '../apk'
 
-MONGO_URI = "127.0.0.1:27017"
+MONGO_URI = "192.168.55.15"
 MONGO_DATABASE = "appetizer"
 
 # Enable and configure the AutoThrottle extension (disabled by default)

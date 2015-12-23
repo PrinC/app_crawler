@@ -28,6 +28,8 @@ class ApkCrawlerFilesPipeline(FilesPipeline):
     id = sha1obj.hexdigest()
     item['_id'] = id
     item['sha1'] = id
+    item['file_url'] = item['file_urls'][0]
+    del item['file_urls'] 
     try: 
       os.rename(path, os.path.join(os.path.dirname(path), id)) 
     except OSError as e:
@@ -58,5 +60,5 @@ class MongoPipeline(object):
     self.client.close()
 
   def process_item(self, item, spider):
-    self.db[self.collection_name].replace_one({'_id': item['_id']}, dict(item), upsert=True)
+    self.db[self.collection_name].update({'_id': item['_id']}, {'$set': dict(item)}, upsert=True)
     return item

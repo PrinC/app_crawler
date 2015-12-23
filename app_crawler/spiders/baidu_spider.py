@@ -9,7 +9,7 @@ class BaiduSpider(CrawlSpider):
   name = "baidu"
   allowed_domains = ["baidu.com"]
   start_urls = ["http://shouji.baidu.com/software/"]
-  rules = (Rule(LinkExtractor(allow=('\/soft\/item'),),follow=True, callback='parse_item'),)
+  rules = (Rule(LinkExtractor(allow=('\/software\/item'),),follow=True, callback='parse_item'),)
 
   def parse_item(self, response):
     item = BaiduItem()

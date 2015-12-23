@@ -17,15 +17,18 @@ class MyappItem(scrapy.Item):
   download_number = scrapy.Field()
   update_time = scrapy.Field()
   file_urls = scrapy.Field()
+  file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
 
 
 class QhItem(scrapy.Item):
   display_name = scrapy.Field()
+  package_name = scrapy.Field()
   rate_number = scrapy.Field()
   download_number = scrapy.Field()
   file_urls = scrapy.Field()
+  file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
 
@@ -35,6 +38,7 @@ class BaiduItem(scrapy.Item):
   rate_number = scrapy.Field()
   download_number = scrapy.Field()
   file_urls = scrapy.Field()
+  file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
 
