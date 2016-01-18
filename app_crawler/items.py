@@ -20,6 +20,7 @@ class MyappItem(scrapy.Item):
   file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
+  parse_url = scrapy.Field()
 
 
 class QhItem(scrapy.Item):
@@ -31,6 +32,7 @@ class QhItem(scrapy.Item):
   file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
+  parse_url = scrapy.Field()
 
 class BaiduItem(scrapy.Item):
   package_name = scrapy.Field() 
@@ -41,4 +43,5 @@ class BaiduItem(scrapy.Item):
   file_url = scrapy.Field()
   _id = scrapy.Field()
   sha1 = scrapy.Field()
+  parse_url = scrapy.Field()
 

@@ -16,6 +16,7 @@ class QhSpider(CrawlSpider):
     schema = 'zhushou360://'
     item = QhItem()
     download_str = response.selector.css('.js-downLog').xpath('@href').extract()[0]
+    item['parse_url'] = response.url;
     item['file_urls'] = urlparse.parse_qs(download_str[download_str.find(schema) + len(schema):])['url']
     item['display_name'] = response.selector.css('#app-name span::text').extract()[0]
     item['rate_number'] = response.selector.css('.s-1::text').extract()[0]

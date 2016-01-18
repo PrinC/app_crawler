@@ -21,8 +21,12 @@ class ApkCrawlerFilesPipeline(FilesPipeline):
       raise DropItem("Download apk failed")
     path = result['path']
     path = os.path.join(FILES_STORE, path)
-    with open(path) as f:
-      content = f.read()
+    try:
+      with open(path) as f:
+        content = f.read()
+    except IOError as e:
+      print result
+      raise DropItem("open error")
     sha1obj = hashlib.sha1()
     sha1obj.update(content)
     id = sha1obj.hexdigest()
@@ -42,6 +46,7 @@ class MongoPipeline(object):
     self.mongo_uri = mongo_uri
     self.mongo_db = mongo_db
     self.collection_name = collection_name + '_meta'
+    self.count = 0
 
 
   @classmethod
@@ -57,8 +62,18 @@ class MongoPipeline(object):
     self.db = self.client[self.mongo_db]
 
   def close_spider(self, spider):
+    print 'mongo count: ' + str(self.count)
     self.client.close()
 
   def process_item(self, item, spider):
-    self.db[self.collection_name].update({'_id': item['_id']}, {'$set': dict(item)}, upsert=True)
+    item['file_url'] = item['file_urls'][0]
+    sha1obj = hashlib.sha1()
+    sha1obj.update(item['display_name'].encode('utf-8'))
+    id = sha1obj.hexdigest()
+    item['_id'] = id
+    try :
+      self.db[self.collection_name].insert(item)
+    except :
+      raise DropItem('Mongo Error')
+    self.count += 1
     return item
