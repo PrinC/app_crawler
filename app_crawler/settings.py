@@ -59,12 +59,12 @@ NEWSPIDER_MODULE = 'app_crawler.spiders'
 #    'scrapy.extensions.closespider.CloseSpider': 1,
 #}
 
-CLOSESPIDER_ITEMCOUNT = 10000
+CLOSESPIDER_ITEMCOUNT = 1000
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-#    'app_crawler.pipelines.ApkCrawlerFilesPipeline': 1,
+    'app_crawler.pipelines.ApkCrawlerFilesPipeline': 1,
 #    'scrapy.pipelines.files.FilesPipeline': 1,
     'app_crawler.pipelines.MongoPipeline': 400,
 }

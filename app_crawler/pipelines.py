@@ -66,11 +66,13 @@ class MongoPipeline(object):
     self.client.close()
 
   def process_item(self, item, spider):
-    item['file_url'] = item['file_urls'][0]
-    sha1obj = hashlib.sha1()
-    sha1obj.update(item['display_name'].encode('utf-8'))
-    id = sha1obj.hexdigest()
-    item['_id'] = id
+    if 'file_url' not in item:
+      item['file_url'] = item['file_urls'][0]
+    if '_id' not in item:
+      sha1obj = hashlib.sha1()
+      sha1obj.update(item['display_name'].encode('utf-8'))
+      id = sha1obj.hexdigest()
+      item['_id'] = id
     try :
       self.db[self.collection_name].insert(item)
     except :

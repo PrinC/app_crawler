@@ -17,7 +17,7 @@ class BaiduSpider(CrawlSpider):
     item['parse_url'] = response.url;
     item['file_urls'] = response.selector.css('.area-download .apk').xpath('@href').extract()
     if urlparse.urlparse(item['file_urls'][0]).netloc != 'p.gdown.baidu.com':
-      raise DropItem('Not baidu official app');
+      return
     item['display_name'] = response.selector.css('.app-name span::text').extract()[0]
     item['rate_number'] = str(int(response.selector.css('.star-percent').xpath('@style').extract()[0][6:-1])/10.0)
     item['download_number'] = response.selector.css('.detail .download-num::text').extract()[0][5:]
