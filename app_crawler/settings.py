@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import logging
 # Scrapy settings for tutorial project
 #
 # For simplicity, this file contains only settings considered important or
@@ -13,7 +13,10 @@ BOT_NAME = 'app_crawler'
 
 SPIDER_MODULES = ['app_crawler.spiders']
 NEWSPIDER_MODULE = 'app_crawler.spiders'
-
+LOG_FILE = "log/app_crawler.log"
+COOKIES_ENABLED = False
+DOWNLOAD_DELAY = 0.25
+JOBDIR="run/default"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
@@ -43,15 +46,16 @@ NEWSPIDER_MODULE = 'app_crawler.spiders'
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'tutorial.middlewares.MyCustomSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    'app_crawler.middlewares.check_exist.CheckExist': 543,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'tutorial.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'app_crawler.middlewares.rotate_useragent.RotateUserAgentMiddleware': 400
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -59,14 +63,15 @@ NEWSPIDER_MODULE = 'app_crawler.spiders'
 #    'scrapy.extensions.closespider.CloseSpider': 1,
 #}
 
+DOWNLOAD_WARNSIZE = 0
 CLOSESPIDER_ITEMCOUNT = 1000
+LOG_LEVEL = logging.DEBUG
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'app_crawler.pipelines.ApkCrawlerFilesPipeline': 1,
-#    'scrapy.pipelines.files.FilesPipeline': 1,
-    'app_crawler.pipelines.MongoPipeline': 400,
+    'app_crawler.pipelines.ApkCrawlerFilesPipeline': 200,
+    'app_crawler.pipelines.MongoPipeline': 400
 }
 
 FILES_STORE = '/media/princ/data/apk'

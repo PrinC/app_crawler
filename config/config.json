@@ -1,0 +1,7 @@
+{
+  "name": "myapp",
+  "item_count": 0,
+  "run_dir": "default/run",
+  "log_file": "default/myapp.log",
+  "data_dest": "default/data"
+}

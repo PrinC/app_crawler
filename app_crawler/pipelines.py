@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import scrapy
 import hashlib
 import os
-import pymongo
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.exceptions import DropItem
-from settings import *
 
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+
 
 class ApkCrawlerFilesPipeline(FilesPipeline):
 
@@ -20,12 +18,12 @@ class ApkCrawlerFilesPipeline(FilesPipeline):
     if not ok:
       raise DropItem("Download apk failed")
     path = result['path']
-    path = os.path.join(FILES_STORE, path)
+    path = os.path.join(self.filestore, path)
     try:
       with open(path) as f:
         content = f.read()
     except IOError as e:
-      print result
+      print result, e.message
       raise DropItem("open error")
     sha1obj = hashlib.sha1()
     sha1obj.update(content)
@@ -40,30 +38,34 @@ class ApkCrawlerFilesPipeline(FilesPipeline):
       raise DropItem("Cannot rename apk file to sha1")
     return item
 
-class MongoPipeline(object):
+  def open_spider(self, spider):
+    self.filestore = spider.settings.get('FILES_STORE')
+    super(ApkCrawlerFilesPipeline, self).open_spider(spider)
 
-  def __init__(self, mongo_uri, mongo_db, collection_name):
-    self.mongo_uri = mongo_uri
-    self.mongo_db = mongo_db
-    self.collection_name = collection_name + '_meta'
-    self.count = 0
+'''
+class CheckExistPipeline(object):
+  def process_item(self, item, spider):
+    print 'checkexist pipeline'
 
-
-  @classmethod
-  def from_crawler(cls, crawler):
-    return cls(
-      mongo_uri = crawler.settings.get('MONGO_URI'),
-      mongo_db = crawler.settings.get('MONGO_DATABASE', 'items'),
-      collection_name = crawler.spider.name
-    )
+    filter = {}
+    if 'package_name' not in item:
+      filter["parse_url"] = item["parse_url"]
+    else:
+      filter["package_name"] = item["package_name"]
+    if self._collection.find_one(filter) is not None:
+      print 'duplicate request'
+      raise DropItem('duplicate request')
+    else:
+      return item
 
   def open_spider(self, spider):
-    self.client = pymongo.MongoClient(self.mongo_uri)
-    self.db = self.client[self.mongo_db]
+    self._collection = spider.get_collection()
+'''
 
-  def close_spider(self, spider):
-    print 'mongo count: ' + str(self.count)
-    self.client.close()
+class MongoPipeline(object):
+
+  def open_spider(self, spider):
+    self._collection = spider.get_collection()
 
   def process_item(self, item, spider):
     if 'file_url' not in item:
@@ -73,9 +75,8 @@ class MongoPipeline(object):
       sha1obj.update(item['display_name'].encode('utf-8'))
       id = sha1obj.hexdigest()
       item['_id'] = id
-    try :
-      self.db[self.collection_name].insert(item)
-    except :
+    try:
+      self._collection.insert(item)
+    except:
       raise DropItem('Mongo Error')
-    self.count += 1
     return item
